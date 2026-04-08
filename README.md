@@ -20,25 +20,20 @@
 
 前往 [智谱开放平台](https://open.bigmodel.cn/) 注册，免费获取 API Key。
 
-### 2. 环境准备
+### 2. 安装
 
 ```bash
-# 激活虚拟环境
-cd /path/to/this/project
-source .venv/bin/activate
+# 从 GitHub 安装
+pip install git+https://github.com/supertiny/zhipu-free.git
 
-# 设置 API Key（必须）
-export ZHIPU_API_KEY="your-api-key"
+# 带 Web UI
+pip install "zhipu-free[web] @ git+https://github.com/supertiny/zhipu-free.git"
 ```
 
-### 3. 安装依赖
+### 3. 设置 API Key
 
 ```bash
-# 基础依赖（CLI + Python 库）
-pip install httpx
-
-# Web UI 额外依赖
-pip install gradio
+export ZHIPU_API_KEY="your-api-key"
 ```
 
 ---
@@ -218,6 +213,7 @@ Web UI 提供 4 个页面：
 | 💬 对话 | 多轮文本对话，可选模型和深度思考 |
 | 👁️ 图片理解 | 上传图片，AI 分析内容 |
 | 🎨 图片生成 | 输入描述，生成图片 |
+| 🎬 视频生成 | 输入描述，异步生成视频 |
 | 📋 模型列表 | 查看所有免费模型信息 |
 
 ### 自定义端口
@@ -247,6 +243,8 @@ python -m zhipu_free web --share
 │   ├── client.py         # 统一客户端 ZhipuFreeClient
 │   ├── cli.py            # CLI 命令行工具
 │   └── web.py            # Gradio Web UI
+├── .copilot/
+│   └── skills/zhipu-free/SKILL.md  # AI Agent Skill 文件
 ├── tests/
 │   └── test_client.py    # 单元测试（22个）
 ├── examples/
@@ -270,3 +268,30 @@ python -m pytest tests/ -v
 # 运行示例
 python examples/demo.py
 ```
+
+---
+
+## AI Agent Skill
+
+本项目自带 VS Code Copilot Skill 文件，让 AI Agent 能直接调用智谱免费模型。
+
+### 自动生效
+
+如果你在 VS Code 中打开了此项目，`.copilot/skills/zhipu-free/SKILL.md` 会自动被 Copilot 识别。
+
+### 全局安装
+
+如果希望在所有项目中都可用，复制到用户级别：
+
+```bash
+mkdir -p ~/.copilot/skills/zhipu-free
+cp .copilot/skills/zhipu-free/SKILL.md ~/.copilot/skills/zhipu-free/
+```
+
+之后，Copilot 在任何工作区都能识别“调用智谱模型”类请求，自动通过 `zhipu` CLI 执行。
+
+---
+
+## License
+
+MIT
