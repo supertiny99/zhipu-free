@@ -1,0 +1,19 @@
+[project]
+name = "zhipu-free"
+version = "0.1.0"
+description = "智谱 AI 免费模型整合工具库"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.27",
+]
+
+[project.scripts]
+zhipu = "zhipu_free.cli:main"
+
+[project.optional-dependencies]
+web = [
+    "gradio>=5",
+]
+dev = [
+    "pytest>=8",
+]
