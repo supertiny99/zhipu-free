@@ -15,6 +15,7 @@ from typing import Any
 
 import httpx
 
+from .config import get_api_key
 from .models import (
     ChatMessage,
     ContentPart,
@@ -39,10 +40,13 @@ class ZhipuFreeClient:
         base_url: str = BASE_URL,
         timeout: float = 120,
     ):
-        self.api_key = api_key or os.environ.get("ZHIPU_API_KEY", "")
+        self.api_key = get_api_key(api_key)
         if not self.api_key:
             raise ValueError(
-                "缺少 API Key，请传入 api_key 参数或设置环境变量 ZHIPU_API_KEY"
+                "缺少 API Key，请通过以下方式之一设置：\n"
+                "  1. zhipu config set-key <your-key>\n"
+                "  2. export ZHIPU_API_KEY=<your-key>\n"
+                "  3. ZhipuFreeClient(api_key=<your-key>)"
             )
         self.base_url = base_url.rstrip("/")
         self._client = httpx.Client(

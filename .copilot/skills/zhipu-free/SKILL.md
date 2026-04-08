@@ -13,14 +13,16 @@ metadata:
 ## 前置条件
 
 - Python >= 3.10，已安装 `zhipu-free` 包
-- 环境变量 `ZHIPU_API_KEY` 已设置（从 https://open.bigmodel.cn/ 免费获取）
-- 项目路径：`/Users/supertiny/Myproject/xl/bigmodel/free`
-- 激活虚拟环境：`source /Users/supertiny/Myproject/xl/bigmodel/free/.venv/bin/activate`
+- API Key 已配置（优先级：函数参数 > 环境变量 `ZHIPU_API_KEY` > 配置文件 `~/.config/zhipu-free/config.json`）
+- 获取 API Key：https://open.bigmodel.cn/ 免费注册
 
 ## 命令速查
 
 | 命令 | 用途 | 示例 |
 |---|---|---|
+| `zhipu config set-key` | 保存 API Key | `zhipu config set-key your-key` |
+| `zhipu config show` | 查看当前配置 | `zhipu config show` |
+| `zhipu config clear-key` | 清除已保存的 Key | `zhipu config clear-key` |
 | `zhipu ask` | 文本对话 | `zhipu ask "解释量子计算"` |
 | `zhipu see` | 图片/视频/文件理解 | `zhipu see photo.jpg "图里有什么"` |
 | `zhipu image` | 文生图 | `zhipu image "赛博朋克城市"` |
@@ -150,4 +152,4 @@ client.close()
 3. **生成图片** → `zhipu image`，返回图片 URL
 4. **生成视频** → `zhipu video`，异步任务需等待
 5. 所有命令输出到 stdout，可管道组合
-6. 出错时检查 `ZHIPU_API_KEY` 环境变量是否已设置
+6. 首次使用先运行 `zhipu config set-key <key>` 保存 API Key，后续无需重复设置

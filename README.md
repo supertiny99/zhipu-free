@@ -24,16 +24,33 @@
 
 ```bash
 # 从 GitHub 安装
-pip install git+https://github.com/supertiny/zhipu-free.git
+pip install git+https://github.com/supertiny99/zhipu-free.git
 
 # 带 Web UI
-pip install "zhipu-free[web] @ git+https://github.com/supertiny/zhipu-free.git"
+pip install "zhipu-free[web] @ git+https://github.com/supertiny99/zhipu-free.git"
 ```
 
-### 3. 设置 API Key
+### 3. 配置 API Key
 
 ```bash
+# 方式一：CLI 保存（推荐，一次设置永久生效）
+zhipu config set-key your-api-key
+
+# 方式二：环境变量
 export ZHIPU_API_KEY="your-api-key"
+
+# 方式三：代码中传入
+client = ZhipuFreeClient(api_key="your-api-key")
+```
+
+优先级：代码参数 > 环境变量 > 配置文件 (`~/.config/zhipu-free/config.json`)
+
+```bash
+# 查看当前配置
+zhipu config show
+
+# 清除已保存的 Key
+zhipu config clear-key
 ```
 
 ---

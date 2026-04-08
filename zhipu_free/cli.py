@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from .client import ZhipuFreeClient
@@ -52,6 +53,14 @@ def main():
     p_vid = sub.add_parser("video", help="文生视频（异步）")
     p_vid.add_argument("prompt", help="视频描述")
 
+    # ── config ────────────────────────────────────────
+    p_cfg = sub.add_parser("config", help="管理配置（API Key 等）")
+    cfg_sub = p_cfg.add_subparsers(dest="config_action")
+    cfg_set = cfg_sub.add_parser("set-key", help="保存 API Key")
+    cfg_set.add_argument("key", help="API Key")
+    cfg_sub.add_parser("show", help="显示当前配置")
+    cfg_sub.add_parser("clear-key", help="清除已保存的 API Key")
+
     # ── models ───────────────────────────────────────
     sub.add_parser("models", help="列出所有免费模型")
 
@@ -68,6 +77,10 @@ def main():
 
     if args.command == "models":
         _cmd_models()
+        return
+
+    if args.command == "config":
+        _cmd_config(args)
         return
 
     if args.command == "web":
@@ -157,6 +170,41 @@ def _cmd_web(args):
         sys.exit(1)
     app = create_app()
     app.launch(server_name="0.0.0.0", server_port=args.port, share=args.share)
+
+
+def _cmd_config(args):
+    from .config import clear_api_key, get_api_key, get_config, set_api_key, CONFIG_FILE
+
+    if args.config_action == "set-key":
+        set_api_key(args.key)
+        print(f"API Key 已保存到 {CONFIG_FILE}")
+    elif args.config_action == "show":
+        config = get_config()
+        key = get_api_key()
+        source = "未找到"
+        if key:
+            if config.get("api_key") == key:
+                source = f"配置文件 ({CONFIG_FILE})"
+            elif os.environ.get("ZHIPU_API_KEY") == key:
+                source = "环境变量 ZHIPU_API_KEY"
+            else:
+                source = "函数参数"
+            masked = key[:8] + "..." + key[-4:] if len(key) > 12 else "***"
+            print(f"API Key: {masked}")
+            print(f"来源:    {source}")
+        else:
+            print("未配置 API Key")
+            print(f"\n设置方法:")
+            print(f"  zhipu config set-key <your-key>")
+            print(f"  export ZHIPU_API_KEY=<your-key>")
+    elif args.config_action == "clear-key":
+        clear_api_key()
+        print("已清除配置文件中的 API Key")
+    else:
+        print("用法:")
+        print("  zhipu config set-key <key>   保存 API Key")
+        print("  zhipu config show            显示配置")
+        print("  zhipu config clear-key       清除 API Key")
 
 
 if __name__ == "__main__":
