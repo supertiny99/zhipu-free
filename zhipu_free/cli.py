@@ -173,30 +173,32 @@ def _cmd_web(args):
 
 
 def _cmd_config(args):
-    from .config import clear_api_key, get_api_key, get_config, set_api_key, CONFIG_FILE
+    from .config import clear_api_key, get_api_key, get_config, set_api_key, _load_dotenv, CONFIG_FILE
 
     if args.config_action == "set-key":
         set_api_key(args.key)
         print(f"API Key 已保存到 {CONFIG_FILE}")
     elif args.config_action == "show":
         config = get_config()
+        dotenv = _load_dotenv()
         key = get_api_key()
         source = "未找到"
         if key:
-            if config.get("api_key") == key:
-                source = f"配置文件 ({CONFIG_FILE})"
-            elif os.environ.get("ZHIPU_API_KEY") == key:
+            if os.environ.get("ZHIPU_API_KEY") == key:
                 source = "环境变量 ZHIPU_API_KEY"
-            else:
-                source = "函数参数"
+            elif dotenv.get("ZHIPU_API_KEY") == key:
+                source = "项目 .env 文件"
+            elif config.get("api_key") == key:
+                source = f"全局配置文件 ({CONFIG_FILE})"
             masked = key[:8] + "..." + key[-4:] if len(key) > 12 else "***"
             print(f"API Key: {masked}")
             print(f"来源:    {source}")
         else:
             print("未配置 API Key")
             print(f"\n设置方法:")
-            print(f"  zhipu config set-key <your-key>")
-            print(f"  export ZHIPU_API_KEY=<your-key>")
+            print(f"  zhipu config set-key <your-key>   （全局保存）")
+            print(f"  echo 'ZHIPU_API_KEY=xxx' > .env   （项目级）")
+            print(f"  export ZHIPU_API_KEY=<your-key>    （会话级）")
     elif args.config_action == "clear-key":
         clear_api_key()
         print("已清除配置文件中的 API Key")
